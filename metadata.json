@@ -1,0 +1,5 @@
+{
+  "name": "AI Video Director Agent",
+  "description": "A professional tool for transforming creative ideas into structured video storyboards and generative AI prompts using Gemini models.",
+  "requestFramePermissions": []
+}
