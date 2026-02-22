@@ -4,10 +4,11 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
-    const geminiApiKey = process.env.GEMINI_API_KEY || env.GEMINI_API_KEY;
+    // 构建时如果有环境变量就用，否则用运行时占位符
+    const geminiApiKey = process.env.GEMINI_API_KEY || env.GEMINI_API_KEY || '__GEMINI_API_KEY_RUNTIME__';
     return {
       server: {
-        port: 3000,
+        port: 7860,
         host: '0.0.0.0',
       },
       plugins: [react()],
@@ -19,6 +20,10 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      build: {
+        outDir: 'dist',
+        sourcemap: false,
       }
     };
 });
