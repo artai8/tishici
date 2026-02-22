@@ -87,15 +87,13 @@ const PromptWorkbench: React.FC<PromptWorkbenchProps> = ({ projectData }) => {
             if (!imgPrompt && !vidPrompt) return null;
 
             return (
-                <div key={shot.id} className="bg-surface border border-border rounded-xl p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6 animate-in slide-in-from-bottom-2">
-                    {/* Shot Info */}
+                <div key={shot.id} className="bg-surface border border-border rounded-xl p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
                     <div className="md:col-span-3 border-b md:border-b-0 md:border-r border-border pb-4 md:pb-0 md:pr-4">
                         <span className="bg-surfaceHighlight text-xs font-mono px-2 py-1 rounded text-textMuted mb-2 inline-block">Shot {shot.id}</span>
                         <p className="text-sm text-textMain mb-2 font-medium">{shot.description}</p>
                         <p className="text-xs text-textMuted italic">{shot.movement}</p>
                     </div>
 
-                    {/* Prompt Display */}
                     <div className="md:col-span-9 space-y-4">
                         {activeTab === 'image' && imgPrompt && (
                             <div className="space-y-3">
