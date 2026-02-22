@@ -35,7 +35,7 @@ export interface ImagePrompt {
   colorGrade: string;
   style: string;
   quality: string;
-  fullPrompt: string; // The assembled prompt string
+  fullPrompt: string;
 }
 
 export interface VideoPrompt {
@@ -49,8 +49,8 @@ export interface ProjectData {
   characters: Character[];
   scenes: Scene[];
   script: Shot[];
-  imagePrompts: Record<number, ImagePrompt>; // Keyed by shot ID
-  videoPrompts: Record<number, VideoPrompt>; // Keyed by shot ID
+  imagePrompts: Record<number, ImagePrompt>;
+  videoPrompts: Record<number, VideoPrompt>;
 }
 
 export interface GenerationProgress {
