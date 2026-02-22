@@ -28,7 +28,7 @@ const IdeaInput: React.FC<IdeaInputProps> = ({ onGenerate, isLoading }) => {
         const mimeType = file.type;
         const analysis = await analyzeImageIdea(base64String, mimeType);
         setIdeaText(prev => prev ? `${prev}\n\n[Visual Analysis]: ${analysis}` : analysis);
-        setActiveTab('text'); // Switch back to text to show result
+        setActiveTab('text');
       };
       reader.readAsDataURL(file);
     } catch (err) {
@@ -40,7 +40,7 @@ const IdeaInput: React.FC<IdeaInputProps> = ({ onGenerate, isLoading }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-4xl mx-auto p-6 space-y-8">
       <div className="text-center space-y-2">
         <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
           AI Video Director Agent
