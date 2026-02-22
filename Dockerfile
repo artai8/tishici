@@ -3,14 +3,21 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
+# 复制依赖文件
+COPY package.json ./
+COPY package-lock.json* ./
 
+# 安装依赖
+RUN npm install
+
+# 复制源代码
 COPY . .
 
+# 设置构建时环境变量
 ARG GEMINI_API_KEY
 ENV VITE_GEMINI_API_KEY=$GEMINI_API_KEY
 
+# 构建
 RUN npm run build
 
 # 生产阶段
