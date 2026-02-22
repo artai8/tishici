@@ -1,7 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { ProjectData, Shot, Character, Scene, AIModel, ImagePrompt, VideoPrompt } from "../types";
+import { ProjectData, Shot, Character, Scene, AIModel, ImagePrompt, VideoPrompt, Settings } from "../types";
 
-// Helper to strip markdown code blocks if the model adds them despite schema
 const cleanJson = (text: string) => {
   let cleaned = text.trim();
   if (cleaned.startsWith('```json')) {
@@ -12,11 +11,10 @@ const cleanJson = (text: string) => {
   return cleaned;
 };
 
-// Initialize Gemini Client
 const getAiClient = () => {
   const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error("API Key not found in environment variables.");
+  if (!apiKey || apiKey === '__GEMINI_API_KEY_RUNTIME__') {
+    throw new Error("API Key not found. Please set GEMINI_API_KEY in HuggingFace Space secrets.");
   }
   return new GoogleGenAI({ apiKey });
 };
@@ -67,7 +65,6 @@ export const generateScriptFromIdea = async (
     Output strictly in JSON format.
   `;
 
-  // Define schema for structured output
   const responseSchema = {
     type: Type.OBJECT,
     properties: {
@@ -142,13 +139,10 @@ export const generateScriptFromIdea = async (
 
 export const generatePromptsForShots = async (
   shots: Shot[],
-  settings: any,
+  settings: Settings,
   model: AIModel = 'gemini-3-flash-preview'
 ): Promise<{ imagePrompts: Record<number, ImagePrompt>, videoPrompts: Record<number, VideoPrompt> }> => {
   const ai = getAiClient();
-
-  // We process in batches if too large, but for now assuming < 40 shots, we can do it in one or two calls.
-  // To ensure stability, let's just do it in one large context call since Gemini 1.5/3 has huge context.
 
   const promptInput = JSON.stringify({
     style: settings.style,
@@ -168,12 +162,8 @@ export const generatePromptsForShots = async (
     - Create a fluid natural language description of movement and content.
     - Ensure logical flow.
 
-    Return JSON with two maps: 'imagePrompts' and 'videoPrompts', keyed by shot ID.
+    Return JSON with two arrays: 'imagePrompts' and 'videoPrompts'.
   `;
-
-  // We define a simpler schema for this specific task to avoid deep nesting issues
-  // Using loose schema strategy for flexibility or explicit if needed.
-  // Let's try explicit to ensure type safety.
 
   const responseSchema = {
     type: Type.OBJECT,
@@ -225,12 +215,15 @@ export const generatePromptsForShots = async (
     const rawText = cleanJson(response.text || "{}");
     const result = JSON.parse(rawText);
     
-    // Transform arrays to records
     const imgRecord: Record<number, ImagePrompt> = {};
     const vidRecord: Record<number, VideoPrompt> = {};
 
-    result.imagePrompts.forEach((p: any) => { imgRecord[p.shotId] = p; });
-    result.videoPrompts.forEach((p: any) => { vidRecord[p.shotId] = p; });
+    if (result.imagePrompts) {
+      result.imagePrompts.forEach((p: any) => { imgRecord[p.shotId] = p; });
+    }
+    if (result.videoPrompts) {
+      result.videoPrompts.forEach((p: any) => { vidRecord[p.shotId] = p; });
+    }
 
     return { imagePrompts: imgRecord, videoPrompts: vidRecord };
   } catch (e) {
