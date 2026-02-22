@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      args:
-        GEMINI_API_KEY: ${GEMINI_API_KEY}
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     ports:
-      - "3000:3000"
+      - "7860:7860"
