@@ -13,22 +13,25 @@ RUN npm install
 # 复制源代码
 COPY . .
 
-# 设置构建时环境变量
-ARG GEMINI_API_KEY
-ENV VITE_GEMINI_API_KEY=$GEMINI_API_KEY
-
-# 构建
+# 构建（不嵌入 API key，运行时通过 nginx 注入）
 RUN npm run build
 
 # 生产阶段
 FROM nginx:alpine
 
+# 安装 envsubst 工具（通常已包含在 alpine nginx 中）
+RUN apk add --no-cache bash
+
 # 复制构建产物
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# 复制 Nginx 配置
+# 复制 Nginx 配置模板
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# 复制启动脚本
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
 
 EXPOSE 7860
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/start.sh"]
