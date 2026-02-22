@@ -1,25 +1,38 @@
+---
+title: Gemini Chat App
+emoji: 🤖
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+license: mit
+---
+
 <div align="center">
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# 运行与部署
+# Gemini Chat App
 
-本项目是一个 Vite + React 应用，可本地运行或部署到 Hugging Face Spaces（Docker）。
+一个基于 Vite + React 构建的 Gemini AI 聊天应用，支持本地运行和部署到 Hugging Face Spaces。
 
-## 本地运行
+## ✨ 功能特性
 
-**前置条件：** Node.js
+- 💬 流畅的对话体验
+- 🎨 现代化 UI 设计
+- 🚀 基于 Vite 构建，快速热更新
+- 🐳 支持 Docker 部署
 
-1. 安装依赖：
-   `npm install`
-2. 在 `.env.local` 中设置 `GEMINI_API_KEY`
-3. 启动开发服务：
-   `npm run dev`
+## 🚀 本地运行
 
-## 部署到 Hugging Face Spaces（Docker）
+### 前置条件
+- Node.js 18+ 
+- npm 或 yarn
 
-1. 创建一个 Space，类型选择 Docker
-2. 在 Space 的 Secrets 中设置 `GEMINI_API_KEY`
-3. 将仓库推送到 Space，即可自动构建并运行
+### 步骤
 
-应用会在端口 `7860` 上启动，并监听 `0.0.0.0`
+1. **克隆仓库**
+   ```bash
+   git clone <你的仓库地址>
+   cd <项目目录>
