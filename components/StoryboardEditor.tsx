@@ -16,8 +16,7 @@ const StoryboardEditor: React.FC<StoryboardEditorProps> = ({ projectData, setPro
   const [refinementPrompt, setRefinementPrompt] = useState('');
   const [isRefining, setIsRefining] = useState(false);
 
-  // Group shots into chunks of 4 for grid visualization logic
-  const shotGroups = [];
+  const shotGroups: Shot[][] = [];
   for (let i = 0; i < projectData.script.length; i += 4) {
     shotGroups.push(projectData.script.slice(i, i + 4));
   }
@@ -53,7 +52,7 @@ const StoryboardEditor: React.FC<StoryboardEditorProps> = ({ projectData, setPro
   };
 
   const RenderScriptView = () => (
-    <div className="space-y-8 animate-in fade-in">
+    <div className="space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-surface border border-border p-4 rounded-xl">
             <h3 className="text-sm uppercase font-bold text-textMuted mb-2">Overview</h3>
@@ -84,10 +83,8 @@ const StoryboardEditor: React.FC<StoryboardEditorProps> = ({ projectData, setPro
                 <div key={shot.id} className="bg-background border border-border rounded-lg p-4 flex flex-col gap-3 relative group hover:border-primary/50 transition-colors">
                    <div className="flex justify-between items-start">
                      <span className="bg-surfaceHighlight text-xs font-mono px-2 py-1 rounded text-textMuted">#{shot.id}</span>
-                     
                    </div>
                    
-                   {/* Description Field */}
                    <div className="space-y-1">
                       <div className="flex justify-between text-xs text-textMuted">
                         <span>Visual Description</span>
@@ -120,7 +117,6 @@ const StoryboardEditor: React.FC<StoryboardEditorProps> = ({ projectData, setPro
                       )}
                    </div>
 
-                   {/* Movement Field */}
                    <div className="space-y-1">
                       <span className="text-xs text-textMuted block">Camera / Movement</span>
                       <input 
@@ -130,7 +126,6 @@ const StoryboardEditor: React.FC<StoryboardEditorProps> = ({ projectData, setPro
                       />
                    </div>
 
-                    {/* Voiceover Field */}
                    <div className="bg-surfaceHighlight/30 p-2 rounded text-xs text-textMuted italic border border-transparent focus-within:border-border">
                       <span className="not-italic text-[10px] uppercase text-zinc-500 block mb-1">Audio/VO</span>
                       <textarea
@@ -150,8 +145,7 @@ const StoryboardEditor: React.FC<StoryboardEditorProps> = ({ projectData, setPro
   );
 
   const RenderDetailsView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in">
-       {/* Characters */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
        <div className="space-y-4">
           <h2 className="text-xl font-bold flex items-center gap-2"><User size={20}/> Characters</h2>
           <div className="space-y-3">
@@ -183,7 +177,6 @@ const StoryboardEditor: React.FC<StoryboardEditorProps> = ({ projectData, setPro
           </div>
        </div>
 
-       {/* Scenes */}
        <div className="space-y-4">
           <h2 className="text-xl font-bold flex items-center gap-2"><MapPin size={20}/> Scenes</h2>
           <div className="space-y-3">
@@ -240,7 +233,6 @@ const StoryboardEditor: React.FC<StoryboardEditorProps> = ({ projectData, setPro
 
       {view === 'script' ? <RenderScriptView /> : <RenderDetailsView />}
 
-      {/* Floating Action Bar */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-surfaceHighlight/90 backdrop-blur-md border border-border/50 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-4 z-50">
         <span className="text-sm font-medium text-textMuted hidden md:block">
           {projectData.script.length} shots ready
