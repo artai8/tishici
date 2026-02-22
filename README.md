@@ -2,19 +2,24 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# 运行与部署
 
-This contains everything you need to run your app locally.
+本项目是一个 Vite + React 应用，可本地运行或部署到 Hugging Face Spaces（Docker）。
 
-View your app in AI Studio: https://ai.studio/apps/drive/1Z_YajWURzbDHSKXBRRad52sUAU-IJu6L
+## 本地运行
 
-## Run Locally
+**前置条件：** Node.js
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
+1. 安装依赖：
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
+2. 在 `.env.local` 中设置 `GEMINI_API_KEY`
+3. 启动开发服务：
    `npm run dev`
+
+## 部署到 Hugging Face Spaces（Docker）
+
+1. 创建一个 Space，类型选择 Docker
+2. 在 Space 的 Secrets 中设置 `GEMINI_API_KEY`
+3. 将仓库推送到 Space，即可自动构建并运行
+
+应用会在端口 `7860` 上启动，并监听 `0.0.0.0`
