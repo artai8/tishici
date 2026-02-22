@@ -12,12 +12,11 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Check for API Key
   const apiKey = process.env.API_KEY;
 
   useEffect(() => {
-    if (!apiKey) {
-      setError("Missing API Key. Please provide process.env.API_KEY.");
+    if (!apiKey || apiKey === '__GEMINI_API_KEY_RUNTIME__') {
+      setError("Missing API Key. Please set GEMINI_API_KEY in your HuggingFace Space secrets.");
     }
   }, [apiKey]);
 
@@ -27,7 +26,6 @@ const App: React.FC = () => {
     try {
       const partialData = await generateScriptFromIdea(idea, shotCount, model);
       
-      // Initialize empty prompts
       const initialProjectData: ProjectData = {
         title: partialData.title || "Untitled Project",
         settings: partialData.settings || { overview: "", style: "" },
@@ -53,7 +51,6 @@ const App: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      // In a real app, you might want to allow model selection for this step too
       const prompts = await generatePromptsForShots(projectData.script, projectData.settings, 'gemini-3-flash-preview');
       
       setProjectData(prev => prev ? ({
@@ -72,7 +69,6 @@ const App: React.FC = () => {
   };
 
   if (error && !projectData) {
-     // Critical initial error
      return (
         <div className="min-h-screen bg-background text-white flex items-center justify-center p-4">
             <div className="max-w-md w-full bg-surface border border-red-900/50 p-6 rounded-xl flex items-start gap-4 text-red-200">
@@ -89,7 +85,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background text-textMain font-sans selection:bg-primary selection:text-white">
-      {/* Background Gradient Mesh */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900 rounded-full blur-[120px]"></div>
          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-900 rounded-full blur-[120px]"></div>
@@ -119,9 +114,8 @@ const App: React.FC = () => {
         )}
       </div>
 
-      {/* Global Loading Overlay (for prompt generation phase usually) */}
       {loading && step === 'editor' && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center">
            <div className="bg-surface border border-border p-8 rounded-2xl shadow-2xl text-center max-w-sm">
               <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
               <h3 className="text-xl font-bold mb-2">Crafting Prompts</h3>
