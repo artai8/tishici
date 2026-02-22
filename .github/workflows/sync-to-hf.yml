@@ -1,0 +1,28 @@
+name: Sync to Hugging Face Space
+
+on:
+  push:
+    branches:
+      - main  # 当 main 分支有推送时触发
+
+# 也可以手动触发
+  workflow_dispatch:
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+      # 第1步：检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整的 git 历史
+          lfs: true       # 如果使用了 Git LFS
+
+      # 第2步：推送到 Hugging Face
+      - name: Push to Hugging Face Hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf https://cciq200:$HF_TOKEN@huggingface.co/spaces/cciq200/uu798
+          git push hf main --force
