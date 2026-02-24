@@ -3,18 +3,30 @@ import { ProjectData, Shot, Character, Scene, AIModel, ImagePrompt, VideoPrompt,
 
 const cleanJson = (text: string) => {
   let cleaned = text.trim();
-  if (cleaned.startsWith('```json')) {
-    cleaned = cleaned.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-  } else if (cleaned.startsWith('```')) {
-    cleaned = cleaned.replace(/^```\s*/, '').replace(/\s*```$/, '');
+  // Remove markdown code blocks
+  cleaned = cleaned.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+  
+  // Attempt to find the first '{' and last '}' if there is extra text
+  const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    cleaned = cleaned.substring(firstBrace, lastBrace + 1);
   }
+  
   return cleaned;
 };
 
+let runtimeApiKey: string | null = null;
+
+export const setApiKey = (key: string) => {
+  runtimeApiKey = key;
+};
+
 const getAiClient = () => {
-  const apiKey = process.env.API_KEY;
+  const apiKey = runtimeApiKey || process.env.API_KEY;
   if (!apiKey || apiKey === '__GEMINI_API_KEY_RUNTIME__') {
-    throw new Error("API Key not found. Please set GEMINI_API_KEY in HuggingFace Space secrets.");
+    throw new Error("API Key not found. Please set GEMINI_API_KEY in HuggingFace Space secrets or enter it in the app.");
   }
   return new GoogleGenAI({ apiKey });
 };
