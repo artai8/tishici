@@ -3,22 +3,30 @@ import IdeaInput from './components/IdeaInput';
 import StoryboardEditor from './components/StoryboardEditor';
 import PromptWorkbench from './components/PromptWorkbench';
 import { ProjectData, AIModel } from './types';
-import { generateScriptFromIdea, generatePromptsForShots } from './services/geminiService';
-import { AlertCircle } from 'lucide-react';
+import { generateScriptFromIdea, generatePromptsForShots, setApiKey } from './services/geminiService';
+import { AlertCircle, Key } from 'lucide-react';
 
 const App: React.FC = () => {
   const [step, setStep] = useState<'idea' | 'editor' | 'prompts'>('idea');
   const [projectData, setProjectData] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [manualApiKey, setManualApiKey] = useState('');
 
   const apiKey = process.env.API_KEY;
 
   useEffect(() => {
-    if (!apiKey || apiKey === '__GEMINI_API_KEY_RUNTIME__') {
-      setError("Missing API Key. Please set GEMINI_API_KEY in your HuggingFace Space secrets.");
+    if ((!apiKey || apiKey === '__GEMINI_API_KEY_RUNTIME__') && !manualApiKey) {
+      setError("Missing API Key. Please set GEMINI_API_KEY in your environment or enter it below.");
     }
-  }, [apiKey]);
+  }, [apiKey, manualApiKey]);
+
+  const handleManualApiKeySubmit = () => {
+    if (manualApiKey.trim()) {
+      setApiKey(manualApiKey.trim());
+      setError(null);
+    }
+  };
 
   const handleGenerateScript = async (idea: string, shotCount: number, model: AIModel) => {
     setLoading(true);
@@ -71,13 +79,43 @@ const App: React.FC = () => {
   if (error && !projectData) {
      return (
         <div className="min-h-screen bg-background text-white flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-surface border border-red-900/50 p-6 rounded-xl flex items-start gap-4 text-red-200">
-               <AlertCircle className="shrink-0" />
-               <div>
-                 <h3 className="font-bold mb-1">Error</h3>
-                 <p className="text-sm">{error}</p>
-                 <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-red-900/50 rounded hover:bg-red-900 transition">Retry</button>
+            <div className="max-w-md w-full bg-surface border border-red-900/50 p-6 rounded-xl flex flex-col gap-4">
+               <div className="flex items-start gap-4 text-red-200">
+                 <AlertCircle className="shrink-0" />
+                 <div>
+                   <h3 className="font-bold mb-1">Error</h3>
+                   <p className="text-sm">{error}</p>
+                 </div>
                </div>
+               
+               {(error.includes("API Key") || error.includes("Missing API Key")) && (
+                  <div className="mt-2 space-y-2">
+                    <label className="text-xs font-bold uppercase text-textMuted">Enter Gemini API Key Manually</label>
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Key className="absolute left-2 top-1/2 -translate-y-1/2 text-textMuted" size={14} />
+                        <input 
+                          type="password" 
+                          placeholder="AIzaSy..." 
+                          className="w-full bg-background border border-border rounded px-8 py-2 text-sm text-textMain focus:ring-1 focus:ring-primary outline-none"
+                          value={manualApiKey}
+                          onChange={(e) => setManualApiKey(e.target.value)}
+                        />
+                      </div>
+                      <button 
+                        onClick={handleManualApiKeySubmit}
+                        className="px-4 py-2 bg-primary hover:bg-primaryHover text-white rounded text-sm font-bold transition-colors"
+                      >
+                        Set Key
+                      </button>
+                    </div>
+                    <p className="text-xs text-textMuted">Your key is stored in memory only and not saved.</p>
+                  </div>
+               )}
+
+               {!error.includes("API Key") && (
+                 <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-red-900/50 rounded hover:bg-red-900 transition text-red-100 self-start">Retry</button>
+               )}
             </div>
         </div>
      );
